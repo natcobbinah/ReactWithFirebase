@@ -25,7 +25,7 @@ class PasswordChange extends Component {
             .then(() => {
                 this.setState({
                     ...INITIAL_STATE
-                })
+                });
             })
             .catch(error => {
                 this.setState({error})
@@ -52,7 +52,7 @@ class PasswordChange extends Component {
                    onChange={this.onChange} type="password"
                    placeholder="New Password"/> 
             <br/>
-            <input name="passwordOne" value={passwordOne}
+            <input name="passwordTwo" value={passwordTwo}
                    onChange={this.onChange} type="password"
                    placeholder="Confirm New Password"/> 
             <br/>
