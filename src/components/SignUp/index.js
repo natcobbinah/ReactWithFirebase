@@ -5,12 +5,15 @@ import PasswordForget from '../PasswordForget';
 
 import {withFirebase} from '../Firebase'
 import {compose} from 'recompose'
+import * as ROLES from '../constants/roles'
+
 
 const INITIAL_STATE  = {
     username: '',
     email: '',
     passwordOne:'',
     passwordTwo:'',
+    isAdmin:false,
     error:null,
 }
 
@@ -32,11 +35,27 @@ class SignUpFormBase extends Component{
     }
 
     onSubmit = event => {
-        const{username,email,passwordOne} = this.state;
+        const{username,email,passwordOne,isAdmin} = this.state;
+
+        const roles = {};
+
+        if(isAdmin){
+            roles[ROLES.ADMIN] = ROLES.ADMIN;
+        }
 
         this.props.firebase
             .doCreateUserWithEmailAndPassword(email,passwordOne)
             .then(authUser => {
+                //create a user in your firebase realtime databases
+                return this.props.firebase
+                        .user(authUser.user.uid)
+                        .set({
+                            username,
+                            email,
+                            roles,
+                    })
+            })
+            .then(() => {
                 this.setState({...INITIAL_STATE})
                 this.props.history.push(ROUTES.HOME);
             })
@@ -52,9 +71,15 @@ class SignUpFormBase extends Component{
         })
     }
 
+    onChangeCheckbox  = event => {
+        this.setState({
+            [event.target.name] : event.target.value,
+        })
+    }
+
     render(){
         const{username,email,passwordOne,
-            passwordTwo,error} = this.state;
+            passwordTwo,isAdmin,error} = this.state;
 
         const isInvalid =
             passwordOne !== passwordTwo ||
@@ -75,6 +100,10 @@ class SignUpFormBase extends Component{
                 <br/>
                 <input name="passwordTwo" value={passwordTwo} onChange={this.onChange}
                     type="password" placeholder="Confirm Password"/>
+                <br/>
+                <label>Admin</label>
+                <input name="isAdmin" type="checkbox" checked={isAdmin}
+                    onChange={this.onChangeCheckbox}/>
                 <br/>
                 <button  disabled={isInvalid} type="submit">Sign Up</button>
                 {error && 
