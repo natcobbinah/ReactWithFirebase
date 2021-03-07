@@ -3,7 +3,7 @@
     "rules": "database.rules.json"
   },
   "hosting": {
-    "public": "build",
+    "public": "build/https://reactwithfirebase-2a382.web.app/",
     "ignore": [
       "firebase.json",
       "**/.*",
