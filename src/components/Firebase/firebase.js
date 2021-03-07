@@ -20,6 +20,8 @@ const firebaseConfig = {
         /* app.analytics(); */
         this.auth = app.auth();
         this.db = app.database();
+
+        this.googleProvider = new app.auth.GoogleAuthProvider();
     }
 
     // *** Auth API ***
@@ -36,6 +38,9 @@ const firebaseConfig = {
 
     doPasswordUpdate = password => 
         this.auth.currentUser.updatePassword(password);
+
+    doSignInWithGoogle = () => 
+        this.auth.signInWithPopup(this.googleProvider);
 
     // *** User API ***
     user = uid => this.db.ref(`users/${uid}`)
